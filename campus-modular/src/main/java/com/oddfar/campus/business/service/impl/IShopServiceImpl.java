@@ -18,8 +18,7 @@ import com.oddfar.campus.business.service.IShopService;
 import com.oddfar.campus.common.core.RedisCache;
 import com.oddfar.campus.common.exception.ServiceException;
 import com.oddfar.campus.common.utils.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -32,9 +31,8 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
+@Slf4j
 public class IShopServiceImpl implements IShopService {
-
-    private static final Logger logger = LoggerFactory.getLogger(IShopServiceImpl.class);
 
     @Autowired
     IShopMapper iShopMapper;
@@ -144,14 +142,14 @@ public class IShopServiceImpl implements IShopService {
         try {
             res = JSONObject.parseObject(urlRes);
         } catch (JSONException jsonException) {
-            logger.info(url);
+            log.info(url);
             throw new ServiceException("查询所在省市的投放产品和数量error，" + province + "-" + itemId);
         }
 
 //        JSONObject res = JSONObject.parseObject(HttpUtil.get(url));
         if (!res.containsKey("code") || !res.getString("code").equals("2000")) {
-            logger.info(url);
-            logger.error("查询所在省市的投放产品和数量error，" + province + "-" + itemId);
+            log.info(url);
+            log.error("查询所在省市的投放产品和数量error，" + province + "-" + itemId);
             throw new ServiceException("查询所在省市的投放产品和数量error，" + province + "-" + itemId);
         }
         //组合信息
