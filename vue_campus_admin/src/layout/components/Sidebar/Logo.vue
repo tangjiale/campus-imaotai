@@ -35,7 +35,7 @@ export default {
   },
   data() {
     return {
-      title: 'campus',
+      title: '涨停',
       logo: logoImg
     }
   }
@@ -55,8 +55,8 @@ export default {
 .sidebar-logo-container {
   position: relative;
   width: 100%;
-  height: 50px;
-  line-height: 50px;
+  height: 60px;
+  line-height: 60px;
   background: #2b2f3a;
   text-align: center;
   overflow: hidden;
@@ -66,8 +66,8 @@ export default {
     width: 100%;
 
     & .sidebar-logo {
-      width: 32px;
-      height: 32px;
+      width: 79px;
+      height: 50px;
       vertical-align: middle;
       margin-right: 12px;
     }
