@@ -5,6 +5,7 @@ import com.alibaba.fastjson2.JSONObject;
 import com.oddfar.campus.business.entity.IUser;
 import com.oddfar.campus.business.mapper.IUserMapper;
 import com.oddfar.campus.business.service.IUserService;
+import com.oddfar.campus.common.core.LambdaQueryWrapperX;
 import com.oddfar.campus.common.domain.PageResult;
 import com.oddfar.campus.common.exception.ServiceException;
 import com.oddfar.campus.common.utils.SecurityUtils;
@@ -97,5 +98,19 @@ public class IUserServiceImpl implements IUserService {
     @Override
     public int deleteIUser(Long[] iUserId) {
         return iUserMapper.deleteIUser(iUserId);
+    }
+
+    @Override
+    public void updateUserAppointmentStatusBatch() {
+        iUserMapper.updateUserAppointmentStatusBatch();
+    }
+
+    @Override
+    public void updateUserAppointmentStatus(Long mobile, Integer appointmentStatus) {
+        IUser user = new IUser();
+        user.setAppointmentStatus(appointmentStatus);
+        LambdaQueryWrapperX<IUser> queryWrapperX = new LambdaQueryWrapperX<>();
+        queryWrapperX.eq(IUser::getMobile,mobile);
+        iUserMapper.update(user,queryWrapperX);
     }
 }

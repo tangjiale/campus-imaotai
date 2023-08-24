@@ -33,6 +33,15 @@ public class CampusIMTTask {
         iUserService.updateUserMinuteBatch();
     }
 
+    /**
+     * 2：30 批量修改用户今日预约状态
+     */
+    @Async
+    @Scheduled(cron = "0 30 2 ? * * ")
+    public void updateUserAppointmentStatusBatch() {
+        iUserService.updateUserAppointmentStatusBatch();
+    }
+
 
     /**
      * 11点期间，每分钟执行一次批量获得旅行奖励
@@ -76,6 +85,9 @@ public class CampusIMTTask {
     public void appointmentResults() {
         imtService.appointmentResults();
     }
+
+
+
 
 
 }

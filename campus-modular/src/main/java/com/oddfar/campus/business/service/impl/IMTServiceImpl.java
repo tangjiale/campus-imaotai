@@ -183,6 +183,8 @@ public class IMTServiceImpl implements IMTService {
         }
         String[] items = iUser.getItemCode().split("@");
 
+        Boolean result = null;
+
         String logContent = "";
         for (String itemId : items) {
             try {
@@ -191,11 +193,31 @@ public class IMTServiceImpl implements IMTService {
                 //预约
                 JSONObject json = reservation(iUser, itemId, shopId);
                 logContent += String.format("[预约项目]：%s\n[shopId]：%s\n[结果返回]：%s\n\n", itemId, shopId, json.toString());
+
+                if (json.get("code").equals(2000)){
+                    // 只有result初始值等于null才更新成功状态，失败则不能更新
+                    if (result== null){
+                        result = true;
+                    }
+                }else {
+                    result = false;
+                }
+
             } catch (Exception e) {
+                result = false;
                 logContent += String.format("执行报错--[预约项目]：%s\n[结果返回]：%s\n\n", itemId, e.getMessage());
             }
         }
+
+        // 如果等于空表示没有执行预约
+        if (result != null) {
+            // 更新用户状态
+            iUserService.updateUserAppointmentStatus(iUser.getMobile(), result ? 1 : 2);
+        }
+
         try {
+            //延时3秒
+            TimeUnit.SECONDS.sleep(3);
             //预约后领取耐力值
             String energyAward = getEnergyAward(iUser);
             logContent += "[申购耐力值]:" + energyAward;
@@ -204,7 +226,6 @@ public class IMTServiceImpl implements IMTService {
         }
         //日志记录
         IMTLogFactory.reservation(iUser, logContent);
-
     }
 
     //获取申购耐力值

@@ -63,4 +63,17 @@ public interface IUserService {
      * @return
      */
     int deleteIUser(Long[] iUserId);
+
+
+    /***
+     * 批量修改用户今日预约状态
+     */
+    void updateUserAppointmentStatusBatch();
+
+    /***
+     * 更新用户的预约状态
+     * @param mobile 用户手机号
+     * @param appointmentStatus 今日预约状态（0：未预约，1:预约成功，2:预约失败）
+     */
+    void updateUserAppointmentStatus(Long mobile,Integer appointmentStatus);
 }

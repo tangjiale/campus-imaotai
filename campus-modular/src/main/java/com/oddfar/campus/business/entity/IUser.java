@@ -123,6 +123,11 @@ public class IUser extends BaseEntity {
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     private Date expireTime;
 
+    /***
+     * 今日预约状态（0：未预约，1:预约成功，2:预约失败）
+     */
+    private Integer appointmentStatus;
+
     @TableField(exist = false)
     private Map<String, Object> params;
 

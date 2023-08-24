@@ -209,6 +209,7 @@
       <el-table-column label="备注" align="center" prop="remark" />
       <el-table-column label="预约项目code" align="center" prop="itemCode" />
       <el-table-column label="省份" align="center" prop="provinceName" />
+      <el-table-column label="城市" align="center" prop="cityName" />
       <el-table-column
         label="类型"
         align="center"
@@ -233,6 +234,15 @@
           <span>{{ parseTime(scope.row.expireTime, "{y}-{m}-{d}") }}</span>
         </template>
       </el-table-column>
+
+      <el-table-column label="今日预约状态" align="center" prop="appointmentStatus">
+        <template slot-scope="scope">
+          <el-tag :type="getStatusTagType(scope.row.appointmentStatus)">
+            {{ getStatusTagText(scope.row.appointmentStatus) }}
+          </el-tag>
+        </template>
+      </el-table-column>
+
       <el-table-column
         label="操作"
         align="center"
@@ -604,6 +614,30 @@ export default {
     });
   },
   methods: {
+    getStatusTagType(appointmentStatus) {
+      switch (appointmentStatus) {
+        case 0:
+          return 'info';
+        case 1:
+          return 'success';
+        case 2:
+          return 'danger';
+        default:
+          return 'info'; // 默认状态，可根据需要修改
+      }
+    },
+    getStatusTagText(appointmentStatus) {
+      switch (appointmentStatus) {
+        case 0:
+          return '未预约';
+        case 1:
+          return '预约成功';
+        case 2:
+          return '预约失败';
+        default:
+          return '未知状态'; // 默认文本，可根据需要修改
+      }
+    },
     //item下拉框选择
     changeItem(e) {
       this.form.itemCode = "";

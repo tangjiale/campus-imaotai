@@ -71,4 +71,7 @@ public interface IUserMapper extends BaseMapperX<IUser> {
     void updateUserMinuteBatch();
 
     int deleteIUser(Long[] iUserId);
+
+    @Select("UPDATE i_user SET `appointment_status` = 0")
+    void updateUserAppointmentStatusBatch();
 }
