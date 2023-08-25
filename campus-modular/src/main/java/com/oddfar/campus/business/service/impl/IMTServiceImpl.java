@@ -47,8 +47,6 @@ public class IMTServiceImpl implements IMTService {
     private static final Logger logger = LoggerFactory.getLogger(IMTServiceImpl.class);
 
     @Autowired
-    private IShopMapper iShopMapper;
-    @Autowired
     private IUserMapper iUserMapper;
 
     @Autowired
@@ -208,24 +206,42 @@ public class IMTServiceImpl implements IMTService {
                 logContent += String.format("执行报错--[预约项目]：%s\n[结果返回]：%s\n\n", itemId, e.getMessage());
             }
         }
-
         // 如果等于空表示没有执行预约
         if (result != null) {
             // 更新用户状态
             iUserService.updateUserAppointmentStatus(iUser.getMobile(), result ? 1 : 2);
         }
-
-        try {
-            //延时3秒
-            TimeUnit.SECONDS.sleep(3);
-            //预约后领取耐力值
-            String energyAward = getEnergyAward(iUser);
-            logContent += "[申购耐力值]:" + energyAward;
-        } catch (Exception e) {
-            logContent += "执行报错--[申购耐力值]:" + e.getMessage();
-        }
         //日志记录
         IMTLogFactory.reservation(iUser, logContent);
+        //预约后延迟领取耐力值
+        getEnergyAwardDelay(iUser);
+    }
+
+    /**
+     * 延迟执行：获取申购耐力值，并记录日志
+     *
+     * @param iUser
+     */
+    public void getEnergyAwardDelay(IUser iUser) {
+        Runnable runnable = new Runnable() {
+            @Override
+            public void run() {
+                String logContent = "";
+                //sleep 10秒
+                try {
+                    Thread.sleep(10000);
+                    //预约后领取耐力值
+                    String energyAward = getEnergyAward(iUser);
+                    logContent += "[申购耐力值]:" + energyAward;
+                } catch (Exception e) {
+                    logContent += "执行报错--[申购耐力值]:" + e.getMessage();
+                }
+                //日志记录
+                IMTLogFactory.reservation(iUser, logContent);
+            }
+        };
+        new Thread(runnable).start();
+
     }
 
     //获取申购耐力值

@@ -40,4 +40,6 @@ build/
 ### mac ###
 .DS_Store
 
+.flattened-pom.xml
+
 local.env
