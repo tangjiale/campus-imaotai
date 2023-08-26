@@ -36,6 +36,11 @@ public class IUser extends BaseEntity {
      */
     private Long userId;
 
+    /***
+     * 用户名字
+     */
+    private String userName;
+
     /**
      * token
      */
@@ -143,7 +148,8 @@ public class IUser extends BaseEntity {
         this.cookie = data.getString("cookie");
         this.jsonResult = StringUtils.substring(jsonObject.toJSONString(), 0, 2000);
 
-        if (StringUtils.isEmpty(this.remark)) {
+        if (StringUtils.isEmpty(this.userName)) {
+            this.userName = data.getString("userName");
             this.remark = data.getString("userName");
         }
 
@@ -162,7 +168,8 @@ public class IUser extends BaseEntity {
         this.deviceId = deviceId.toLowerCase();
         this.jsonResult = StringUtils.substring(jsonObject.toJSONString(), 0, 2000);
 
-        if (StringUtils.isEmpty(this.remark)) {
+        if (StringUtils.isEmpty(this.userName)) {
+            this.userName = data.getString("userName");
             this.remark = data.getString("userName");
         }
 

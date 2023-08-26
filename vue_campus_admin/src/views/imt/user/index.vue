@@ -146,6 +146,9 @@
             <el-form-item label="I茅台用户id">
               <span>{{ props.row.userId }}</span>
             </el-form-item>
+            <el-form-item label="用户名称">
+              <span>{{ props.row.userName }}</span>
+            </el-form-item>
             <el-form-item label="备注">
               <span>{{ props.row.remark }}</span>
             </el-form-item>
@@ -206,7 +209,7 @@
 
       <el-table-column type="selection" width="55" align="center" />
       <el-table-column label="手机号" align="center" prop="mobile" />
-      <el-table-column label="备注" align="center" prop="remark" />
+      <el-table-column label="用户名称" align="center" prop="userName" />
       <el-table-column label="预约项目code" align="center" prop="itemCode" />
       <el-table-column label="省份" align="center" prop="provinceName" />
       <el-table-column label="城市" align="center" prop="cityName" />
@@ -305,8 +308,8 @@
         </el-form-item>
         <el-row>
           <el-col :span="12">
-            <el-form-item label="备注" prop="remark">
-              <el-input v-model="form.remark" placeholder="请输入备注" />
+            <el-form-item label="用户名称" prop="userName">
+              <el-input readonly v-model="form.userName"/>
             </el-form-item>
           </el-col>
           <el-col :span="12">
@@ -436,16 +439,24 @@
         <!-- <el-form-item label="完整地址" prop="address">
           <el-input v-model="form.address" placeholder="请输入完整地址" />
         </el-form-item> -->
-
-        <el-form-item label="到期时间" prop="expireTime">
-          <el-date-picker
-            v-model="form.expireTime"
-            type="datetime"
-            value-format="yyyy-MM-dd HH:mm:ss"
-            placeholder="选择日期时间"
-          >
-          </el-date-picker>
-        </el-form-item>
+        <el-row>
+          <el-col :span="12">
+           <el-form-item label="到期时间" prop="expireTime">
+            <el-date-picker
+              v-model="form.expireTime"
+              type="datetime"
+              value-format="yyyy-MM-dd HH:mm:ss"
+              placeholder="选择日期时间"
+            >
+            </el-date-picker>
+          </el-form-item>
+          </el-col>
+        <el-col :span="12">
+          <el-form-item label="备注" prop="remark">
+            <el-input v-model="form.remark" placeholder="请输入备注" />
+          </el-form-item>
+        </el-col>
+        </el-row>
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button type="primary" @click="submitForm">确 定</el-button>
@@ -691,6 +702,7 @@ export default {
         shopType: 1,
         ishopId: null,
         randomMinute: "0",
+        userName: null,
         remark: null,
         expireTime: null,
         pushPlusToken: null,
@@ -838,7 +850,7 @@ export default {
         mobile: row.mobile,
         deviceId: row.deviceId,
       };
-      this.title = "刷新用户:" + row.remark + "(" + row.mobile + ")登录信息";
+      this.title = "刷新用户:" + row.userName + "(" + row.mobile + ")登录信息";
     },
   },
 };

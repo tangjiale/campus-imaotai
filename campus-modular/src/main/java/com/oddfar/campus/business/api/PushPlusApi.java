@@ -3,6 +3,7 @@ package com.oddfar.campus.business.api;
 import cn.hutool.http.HttpUtil;
 import com.oddfar.campus.business.entity.ILog;
 import com.oddfar.campus.business.entity.IUser;
+import com.oddfar.campus.common.enums.IMaotaiFunctionEnum;
 import com.oddfar.campus.common.utils.StringUtils;
 import com.oddfar.campus.framework.manager.AsyncManager;
 
@@ -16,20 +17,24 @@ import java.util.TimerTask;
 public class PushPlusApi {
 
 
-    public static void sendNotice(IUser iUser, ILog operLog) {
+    public static void sendNotice(IUser iUser, IMaotaiFunctionEnum functionEnum, ILog operLog) {
         String token = iUser.getPushPlusToken();
         if (StringUtils.isEmpty(token)) {
             return;
         }
+
+        // 获取通知用户名（如果备注为空，则发送用户名）
+        String userName = StringUtils.isEmpty(iUser.getRemark()) ? iUser.getUserName() : iUser.getRemark();
+
         String title, content;
         if (operLog.getStatus() == 0) {
             //预约成功
-            title = iUser.getRemark() + "-i茅台执行成功";
+            title = userName +"-" + functionEnum.getMsg()+ "-i茅台执行成功";
             content = iUser.getMobile() + System.lineSeparator() + operLog.getLogContent();
             AsyncManager.me().execute(sendNotice(token, title, content, "txt"));
         } else {
             //预约失败
-            title = iUser.getRemark() + "-i茅台执行失败";
+            title = userName + "-" + functionEnum.getMsg() + "-i茅台执行失败";
             content = iUser.getMobile() + System.lineSeparator() + operLog.getLogContent();
             AsyncManager.me().execute(sendNotice(token, title, content, "txt"));
         }
