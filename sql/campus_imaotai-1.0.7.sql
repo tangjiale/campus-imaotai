@@ -2712,6 +2712,7 @@ DROP TABLE IF EXISTS `i_user`;
 CREATE TABLE `i_user`  (
                            `mobile` bigint(0) NOT NULL COMMENT 'I茅台手机号',
                            `user_id` bigint(0) NULL DEFAULT NULL COMMENT 'I茅台用户id',
+                           `user_name` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL COMMENT '用户姓名',
                            `token` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT 'I茅台toekn',
                            `cookie` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT 'I茅台cookie',
                            `device_id` varchar(50) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '设备id',
