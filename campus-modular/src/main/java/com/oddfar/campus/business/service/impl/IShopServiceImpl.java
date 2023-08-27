@@ -8,6 +8,7 @@ import cn.hutool.http.Method;
 import com.alibaba.fastjson2.JSONArray;
 import com.alibaba.fastjson2.JSONException;
 import com.alibaba.fastjson2.JSONObject;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.oddfar.campus.business.domain.IMTItemInfo;
 import com.oddfar.campus.business.domain.MapPoint;
 import com.oddfar.campus.business.entity.IItem;
@@ -32,7 +33,7 @@ import java.util.stream.Collectors;
 
 @Service
 @Slf4j
-public class IShopServiceImpl implements IShopService {
+public class IShopServiceImpl extends ServiceImpl<IShopMapper,IShop> implements IShopService {
 
     @Autowired
     IShopMapper iShopMapper;
@@ -79,11 +80,13 @@ public class IShopServiceImpl implements IShopService {
         JSONObject jsonObject = JSONObject.parseObject(s);
         Set<String> shopIdSet = jsonObject.keySet();
 
+        List<IShop> iShopList = new ArrayList<>();
         for (String iShopId : shopIdSet) {
             JSONObject shop = jsonObject.getJSONObject(iShopId);
             IShop iShop = new IShop(iShopId, shop);
-            iShopMapper.insert(iShop);
+            iShopList.add(iShop);
         }
+        this.saveBatch(iShopList,iShopList.size());
     }
 
     @Override
