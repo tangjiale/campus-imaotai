@@ -53,6 +53,10 @@ public class SysUserEntity extends BaseEntity  {
     @Size(min = 0, max = 11, message = "手机号码长度不能超过11个字符")
     private String phonenumber;
 
+    /** 统一推送token*/
+    @Size(max = 50, message = "token长度不能超过50个字符")
+    private String pushPlusToken;
+
     /** 用户性别 */
     private String sex;
 

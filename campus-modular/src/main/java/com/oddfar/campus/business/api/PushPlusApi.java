@@ -4,6 +4,7 @@ import cn.hutool.http.HttpUtil;
 import com.oddfar.campus.business.entity.ILog;
 import com.oddfar.campus.business.entity.IUser;
 import com.oddfar.campus.common.enums.IMaotaiFunctionEnum;
+import com.oddfar.campus.common.utils.SimpleUtils;
 import com.oddfar.campus.common.utils.StringUtils;
 import com.oddfar.campus.framework.manager.AsyncManager;
 
@@ -40,6 +41,26 @@ public class PushPlusApi {
         }
 
 
+    }
+
+    public static void sendNotice(IUser iUser, IMaotaiFunctionEnum functionEnum, ILog operLog, String adminPushToken) {
+        String token = iUser.getPushPlusToken();
+        if (StringUtils.isEmpty(token) && StringUtils.isEmpty(adminPushToken)) {
+            return;
+        }
+        // 获取通知用户名（如果备注为空，则发送用户名）
+        String userName = StringUtils.isEmpty(iUser.getRemark()) ? iUser.getUserName() : iUser.getRemark();
+
+        String title = userName +"-" + functionEnum.getMsg() + (operLog.getStatus() == 0 ? "-i茅台执行成功" :  "-i茅台执行失败");
+        String content = iUser.getMobile() + System.lineSeparator() + operLog.getLogContent();
+        SimpleUtils.doSupplierWhenTrue(StringUtils.isNotEmpty(token), () -> {
+            AsyncManager.me().execute(sendNotice(token, title, content, "txt"));
+            return null;
+        });
+        SimpleUtils.doSupplierWhenTrue(StringUtils.isNotEmpty(adminPushToken), () -> {
+            AsyncManager.me().execute(sendNotice(adminPushToken, title, content, "txt"));
+            return null;
+        });
     }
 
     /**

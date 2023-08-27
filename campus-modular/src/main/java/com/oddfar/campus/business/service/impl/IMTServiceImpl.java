@@ -20,11 +20,12 @@ import com.oddfar.campus.business.service.IMTService;
 import com.oddfar.campus.business.service.IShopService;
 import com.oddfar.campus.business.service.IUserService;
 import com.oddfar.campus.common.core.RedisCache;
+import com.oddfar.campus.common.domain.entity.SysUserEntity;
 import com.oddfar.campus.common.enums.IMaotaiFunctionEnum;
 import com.oddfar.campus.common.exception.ServiceException;
 import com.oddfar.campus.common.utils.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import com.oddfar.campus.framework.service.SysUserService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
@@ -39,14 +40,15 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 @Service
+@Slf4j
 public class IMTServiceImpl implements IMTService {
 
-    private static final Logger logger = LoggerFactory.getLogger(IMTServiceImpl.class);
 
     @Autowired
     private IUserMapper iUserMapper;
@@ -58,6 +60,9 @@ public class IMTServiceImpl implements IMTService {
     private IUserService iUserService;
     @Autowired
     private IShopService iShopService;
+
+    @Autowired
+    private SysUserService sysUserService;
 
     private final static String SALT = "2af72f100c356273d46284f6fd1dfc08";
 
@@ -126,11 +131,11 @@ public class IMTServiceImpl implements IMTService {
         HttpResponse execute = request.body(JSONObject.toJSONString(data)).execute();
         JSONObject jsonObject = JSONObject.parseObject(execute.body());
         //成功返回 {"code":2000}
-        logger.info("「发送验证码返回」：" + jsonObject.toJSONString());
+        log.info("「发送验证码返回」：" + jsonObject.toJSONString());
         if (jsonObject.getString("code").equals("2000")) {
             return Boolean.TRUE;
         } else {
-            logger.error("「发送验证码-失败」：" + jsonObject.toJSONString());
+            log.error("「发送验证码-失败」：" + jsonObject.toJSONString());
             throw new ServiceException("发送验证码错误");
 //            return false;
         }
@@ -164,11 +169,11 @@ public class IMTServiceImpl implements IMTService {
         JSONObject body = JSONObject.parseObject(execute.body());
 
         if (body.getString("code").equals("2000")) {
-//            logger.info("「登录请求-成功」" + body.toJSONString());
+//            log.info("「登录请求-成功」" + body.toJSONString());
             iUserService.insertIUser(Long.parseLong(mobile), deviceId, body);
             return true;
         } else {
-            logger.error("「登录请求-失败」" + body.toJSONString());
+            log.error("「登录请求-失败」" + body.toJSONString());
             throw new ServiceException("登录失败，本地错误日志已记录");
 //            return false;
         }
@@ -479,7 +484,7 @@ public class IMTServiceImpl implements IMTService {
         List<IUser> iUsers = iUserService.selectReservationUserByMinute(minute);
 
         for (IUser iUser : iUsers) {
-            logger.info("「开始预约用户」" + iUser.getMobile());
+            log.info("「开始预约用户」" + iUser.getMobile());
             //预约
             reservation(iUser);
             //延时3秒
@@ -501,7 +506,7 @@ public class IMTServiceImpl implements IMTService {
 //        List<IUser> iUsers = iUserService.selectReservationUser();
 
             for (IUser iUser : iUsers) {
-                logger.info("「开始获得旅行奖励」" + iUser.getMobile());
+                log.info("「开始获得旅行奖励」" + iUser.getMobile());
                 getTravelReward(iUser);
                 //延时3秒
                 TimeUnit.SECONDS.sleep(3);
@@ -520,7 +525,7 @@ public class IMTServiceImpl implements IMTService {
 
     @Override
     public void appointmentResults() {
-        logger.info("申购结果查询开始=========================");
+        log.info("申购结果查询开始=========================");
         List<IUser> iUsers = iUserService.selectReservationUser();
         for (IUser iUser : iUsers) {
             try {
@@ -531,6 +536,7 @@ public class IMTServiceImpl implements IMTService {
                         .header("MT-Token", iUser.getToken())
                         .header("User-Agent", "iOS;16.3;Apple;?unrecognized?").execute().body();
                 JSONObject jsonObject = JSONObject.parseObject(body);
+                log.info("申购结果查询响应： {}", jsonObject.toJSONString());
                 if (jsonObject.getInteger("code") != 2000) {
                     String message = jsonObject.getString("message");
                     throw new ServiceException(message);
@@ -541,15 +547,17 @@ public class IMTServiceImpl implements IMTService {
                     if (item.getInteger("status") == 2 && DateUtil.between(item.getDate("reservationTime"), new Date(), DateUnit.HOUR) < 24) {
                         String logContent = DateUtil.formatDate(item.getDate("reservationTime")) + " 申购" + item.getString("itemName") + "成功";
                         IMTLogFactory.reservation(iUser, IMaotaiFunctionEnum.SG, logContent);
+                        SysUserEntity sysUser = sysUserService.selectUserById(iUser.getCreateUser());
+                        IMTLogFactory.reservation(iUser, IMaotaiFunctionEnum.SG, logContent, Objects.nonNull(sysUser) ? sysUser.getPushPlusToken() : "");
                     }
 
                 }
             } catch (Exception e) {
-                logger.error("查询申购结果失败:失败原因{}", e.getMessage());
+                log.error("查询申购结果失败:失败原因{}", e.getMessage());
             }
 
         }
-        logger.info("申购结果查询结束=========================");
+        log.info("申购结果查询结束=========================");
     }
 
     public JSONObject reservation(IUser iUser, String itemId, String shopId) {
@@ -590,7 +598,7 @@ public class IMTServiceImpl implements IMTService {
             String message = body.getString("message");
             throw new ServiceException(message);
         }
-//        logger.info(body.toJSONString());
+//        log.info(body.toJSONString());
         return body;
     }
 

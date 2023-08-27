@@ -3278,3 +3278,6 @@ CREATE TABLE `sys_user_role`  (
 INSERT INTO `sys_user_role` VALUES (1, 1);
 
 SET FOREIGN_KEY_CHECKS = 1;
+
+-- 2023-08-27 sys_user
+ALTER TABLE `sys_user` ADD COLUMN `push_plus_token` varchar(50) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci DEFAULT NULL COMMENT 'push_plus_token' ;

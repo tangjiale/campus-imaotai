@@ -37,6 +37,20 @@ public class IMTLogFactory {
         PushPlusApi.sendNotice(iUser, functionEnum, operLog);
     }
 
+    public static void reservation(IUser iUser, IMaotaiFunctionEnum functionEnum, String logContent, String adminPushToken) {
+        ILog operLog = new ILog();
+
+        operLog.setOperTime(new Date());
+        operLog.setStatus(logContent.contains("报错") ? 1 : 0);
+        operLog.setMobile(iUser.getMobile());
+        operLog.setCreateUser(iUser.getCreateUser());
+        operLog.setLogContent(logContent);
+
+        AsyncManager.me().execute(recordOper(operLog));
+        //推送
+        PushPlusApi.sendNotice(iUser, functionEnum, operLog, adminPushToken);
+    }
+
     /**
      * 操作日志记录
      *
