@@ -524,9 +524,8 @@ public class IMTServiceImpl implements IMTService {
                     // 预约时间在24小时内的
                     if (item.getInteger("status") == 2 && DateUtil.between(item.getDate("reservationTime"), new Date(), DateUnit.HOUR) < 24) {
                         String logContent = DateUtil.formatDate(item.getDate("reservationTime")) + " 申购" + item.getString("itemName") + "成功";
-                        IMTLogFactory.reservation(iUser,IMaotaiFunctionEnum.SG, logContent);
                         SysUserEntity sysUser = sysUserService.selectUserById(iUser.getCreateUser());
-                        IMTLogFactory.reservation(iUser, logContent, Objects.nonNull(sysUser) ? sysUser.getPushPlusToken() : "");
+                        IMTLogFactory.reservation(iUser, IMaotaiFunctionEnum.SG, logContent, Objects.nonNull(sysUser) ? sysUser.getPushPlusToken() : "");
                     }
 
                 }

@@ -37,7 +37,7 @@ public class IMTLogFactory {
         PushPlusApi.sendNotice(iUser, functionEnum, operLog);
     }
 
-    public static void reservation(IUser iUser, String logContent, String adminPushToken) {
+    public static void reservation(IUser iUser, IMaotaiFunctionEnum functionEnum, String logContent, String adminPushToken) {
         ILog operLog = new ILog();
 
         operLog.setOperTime(new Date());
@@ -48,7 +48,7 @@ public class IMTLogFactory {
 
         AsyncManager.me().execute(recordOper(operLog));
         //推送
-        PushPlusApi.sendNotice(iUser, operLog, adminPushToken);
+        PushPlusApi.sendNotice(iUser, functionEnum, operLog, adminPushToken);
     }
 
     /**

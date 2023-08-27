@@ -43,12 +43,15 @@ public class PushPlusApi {
 
     }
 
-    public static void sendNotice(IUser iUser, ILog operLog, String adminPushToken) {
+    public static void sendNotice(IUser iUser, IMaotaiFunctionEnum functionEnum, ILog operLog, String adminPushToken) {
         String token = iUser.getPushPlusToken();
         if (StringUtils.isEmpty(token) && StringUtils.isEmpty(adminPushToken)) {
             return;
         }
-        String title = iUser.getRemark() + (operLog.getStatus() == 0 ? "-i茅台执行成功" :  "-i茅台执行失败");
+        // 获取通知用户名（如果备注为空，则发送用户名）
+        String userName = StringUtils.isEmpty(iUser.getRemark()) ? iUser.getUserName() : iUser.getRemark();
+
+        String title = userName +"-" + functionEnum.getMsg() + (operLog.getStatus() == 0 ? "-i茅台执行成功" :  "-i茅台执行失败");
         String content = iUser.getMobile() + System.lineSeparator() + operLog.getLogContent();
         SimpleUtils.doSupplierWhenTrue(StringUtils.isNotEmpty(token), () -> {
             AsyncManager.me().execute(sendNotice(token, title, content, "txt"));

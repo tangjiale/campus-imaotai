@@ -46,7 +46,6 @@ public class SysProfileController {
     /**
      * 修改用户
      */
-    @PutMapping(name= "个人信息管理-修改")
     @PutMapping(name ="个人信息管理-修改")
     public R updateProfile(@RequestBody SysUserEntity user) {
         LoginUser loginUser = getLoginUser();
