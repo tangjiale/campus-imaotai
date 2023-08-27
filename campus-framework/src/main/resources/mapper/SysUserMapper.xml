@@ -16,10 +16,13 @@
         <result property="delFlag"      column="del_flag"     />
         <result property="loginIp"      column="login_ip"     />
         <result property="loginDate"    column="login_date"   />
-        <result property="createUser"     column="create_user"    />
+        <result property="createUser"   column="create_user"    />
         <result property="createTime"   column="create_time"  />
-        <result property="updateUser"     column="update_user"    />
+        <result property="updateUser"   column="update_user"    />
         <result property="updateTime"   column="update_time"  />
+        <result property="remark"       column="remark"       />
+        <result property="notifyType"   column="notify_type" />
+        <result property="notifyToken"  column="notify_token" />
         <result property="remark"       column="remark"       />
         <collection  property="roles"   javaType="java.util.List"   resultMap="RoleResult" />
     </resultMap>
@@ -36,7 +39,7 @@
 
     <sql id="selectUserVo">
         select u.user_id, u.user_name, u.nick_name, u.email, u.avatar, u.phonenumber, u.password, u.sex, u.status, u.del_flag, u.login_ip, u.login_date, u.create_user, u.create_time, u.remark,
-               r.role_id, r.role_name, r.role_key, r.role_sort, r.status as role_status
+               r.role_id, r.role_name, r.role_key, r.role_sort, r.status as role_status,u.notify_type,u.notify_token
         from sys_user u
                  left join sys_user_role ur on u.user_id = ur.user_id
                  left join sys_role r on r.role_id = ur.role_id

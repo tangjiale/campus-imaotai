@@ -1,5 +1,5 @@
 import request from '@/utils/request'
-import { parseStrEmpty } from "@/utils/ruoyi";
+import {parseStrEmpty} from "@/utils/ruoyi";
 
 // 查询用户列表
 export function listUser(query) {
@@ -95,6 +95,19 @@ export function updateUserPwd(oldPassword, newPassword) {
   }
   return request({
     url: '/system/user/profile/updatePwd',
+    method: 'put',
+    params: data
+  })
+}
+
+// 用户通知消息设置
+export function updateNotifySetting(notifyType, notifyToken) {
+  const data = {
+    notifyType,
+    notifyToken
+  }
+  return request({
+    url: '/system/user/profile/notifyMessageSetting',
     method: 'put',
     params: data
   })

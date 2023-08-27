@@ -48,6 +48,9 @@
             <el-tab-pane label="修改密码" name="resetPwd">
               <resetPwd />
             </el-tab-pane>
+            <el-tab-pane label="通知消息" name="userNotify">
+              <userNotify :user="user" />
+            </el-tab-pane>
           </el-tabs>
         </el-card>
       </el-col>
@@ -59,11 +62,12 @@
 import userAvatar from "./userAvatar";
 import userInfo from "./userInfo";
 import resetPwd from "./resetPwd";
+import userNotify from "./userNotify.vue";
 import { getUserProfile } from "@/api/system/user";
 
 export default {
   name: "Profile",
-  components: { userAvatar, userInfo, resetPwd },
+  components: { userAvatar, userInfo, resetPwd ,userNotify},
   data() {
     return {
       user: {},

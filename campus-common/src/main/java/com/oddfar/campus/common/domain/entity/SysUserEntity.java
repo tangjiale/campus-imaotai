@@ -75,6 +75,16 @@ public class SysUserEntity extends BaseEntity  {
     /** 备注 */
     private String remark;
 
+    /***
+     * 通知类型，见 NotifyTypeEnum
+     */
+    private Integer notifyType;
+
+    /***
+     * 通知个人token
+     */
+    private String notifyToken;
+
     /** 角色对象 */
     @TableField(exist = false)
     private List<SysRoleEntity> roles;

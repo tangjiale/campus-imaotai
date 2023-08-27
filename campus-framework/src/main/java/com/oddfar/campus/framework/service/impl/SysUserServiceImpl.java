@@ -1,5 +1,7 @@
 package com.oddfar.campus.framework.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.oddfar.campus.common.domain.PageResult;
 import com.oddfar.campus.common.domain.entity.SysRoleEntity;
 import com.oddfar.campus.common.domain.entity.SysUserEntity;
@@ -211,6 +213,17 @@ public class SysUserServiceImpl implements SysUserService {
             return false;
         }
         return true;
+    }
+
+    @Override
+    public boolean notifyMessageSetting(Long userId,Integer notifyType,String notifyToken) {
+        LambdaUpdateWrapper<SysUserEntity> updateWrapper = new LambdaUpdateWrapper<>();
+        updateWrapper.eq(SysUserEntity::getUserId,userId);
+
+        SysUserEntity sysUserEntity = new SysUserEntity();
+        sysUserEntity.setNotifyType(notifyType);
+        sysUserEntity.setNotifyToken(notifyToken);
+        return userMapper.update(sysUserEntity,updateWrapper)>0;
     }
 
     /**

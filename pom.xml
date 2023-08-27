@@ -11,12 +11,13 @@
 
     <name>campus</name>
     <url>http://campus.oddfar.com</url>
-    <description>校园信息墙</description>
+    <description>茅台预约中心</description>
 
     <modules>
         <module>campus-common</module>
         <module>campus-framework</module>
         <module>campus-admin</module>
+        <module>campus-message</module>
         <module>campus-modular</module>
     </modules>
 

@@ -63,7 +63,6 @@ public interface SysUserMapper extends BaseMapperX<SysUserEntity> {
      * @return 结果
      */
     int updateUserAvatar(@Param("userName") String userName, @Param("avatar") String avatar);
-
     /**
      * 校验email是否唯一
      *

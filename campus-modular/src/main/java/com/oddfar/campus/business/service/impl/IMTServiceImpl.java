@@ -14,7 +14,6 @@ import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONArray;
 import com.alibaba.fastjson2.JSONObject;
 import com.oddfar.campus.business.entity.IUser;
-import com.oddfar.campus.business.mapper.IShopMapper;
 import com.oddfar.campus.business.mapper.IUserMapper;
 import com.oddfar.campus.business.service.IMTLogFactory;
 import com.oddfar.campus.business.service.IMTService;
@@ -34,6 +33,8 @@ import javax.annotation.PostConstruct;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -193,12 +194,12 @@ public class IMTServiceImpl implements IMTService {
                 JSONObject json = reservation(iUser, itemId, shopId);
                 logContent += String.format("[预约项目]：%s\n[shopId]：%s\n[结果返回]：%s\n\n", itemId, shopId, json.toString());
 
-                if (json.get("code").equals(2000)){
+                if (json.get("code").equals(2000)) {
                     // 只有result初始值等于null才更新成功状态，失败则不能更新
-                    if (result== null){
+                    if (result == null) {
                         result = true;
                     }
-                }else {
+                } else {
                     result = false;
                 }
 
@@ -238,7 +239,7 @@ public class IMTServiceImpl implements IMTService {
                     logContent += "执行报错--[申购耐力值]:" + e.getMessage();
                 }
                 //日志记录
-                IMTLogFactory.reservation(iUser,IMaotaiFunctionEnum.NL, logContent);
+                IMTLogFactory.reservation(iUser, IMaotaiFunctionEnum.NL, logContent);
             }
         };
         new Thread(runnable).start();
@@ -272,16 +273,32 @@ public class IMTServiceImpl implements IMTService {
 
     @Override
     public void getTravelReward(IUser iUser) {
-        String logContent = "";
-        try {
-            String s = travelReward(iUser);
-            logContent += "[获得旅行奖励]:" + s;
-        } catch (Exception e) {
-//            e.printStackTrace();
-            logContent += "执行报错--[获得旅行奖励]:" + e.getMessage();
+
+        //本月已经旅行完了的不需要再次旅行
+        String userId = redisCache.getCacheObject("TravelReward:" + iUser.getUserId());
+        if (StringUtils.isEmpty(userId)) {
+            String logContent = "";
+            try {
+                String s = travelReward(iUser);
+                logContent += "[获得旅行奖励]:" + s;
+            } catch (Exception e) {
+                logContent += "执行报错--[获得旅行奖励]:" + e.getMessage();
+
+            }
+            // 如果是当月已经领完奖励则不需要记录日志和发送消息
+            if (!logContent.contains("当月无可领取奖励")) {
+                //日志记录
+                IMTLogFactory.reservation(iUser, IMaotaiFunctionEnum.LX, logContent);
+            } else {
+                // 如果是当月已经领取完奖励则把当前用户在月底前无需再次旅行了
+                // 获取间隔到本月28日23点59分59秒相隔多少秒
+                LocalDateTime currentDate = LocalDateTime.now();
+                LocalDateTime targetDate = LocalDateTime.of(currentDate.getYear(), currentDate.getMonth(), 28, 23, 59, 59);
+                long secondsDifference = ChronoUnit.SECONDS.between(currentDate, targetDate);
+
+                redisCache.setCacheObject("TravelReward:" + iUser.getUserId(), iUser.getUserId(), (int) secondsDifference, TimeUnit.SECONDS);
+            }
         }
-        //日志记录
-        IMTLogFactory.reservation(iUser,IMaotaiFunctionEnum.LX, logContent);
     }
 
     /**
@@ -523,7 +540,7 @@ public class IMTServiceImpl implements IMTService {
                     // 预约时间在24小时内的
                     if (item.getInteger("status") == 2 && DateUtil.between(item.getDate("reservationTime"), new Date(), DateUnit.HOUR) < 24) {
                         String logContent = DateUtil.formatDate(item.getDate("reservationTime")) + " 申购" + item.getString("itemName") + "成功";
-                        IMTLogFactory.reservation(iUser,IMaotaiFunctionEnum.SG, logContent);
+                        IMTLogFactory.reservation(iUser, IMaotaiFunctionEnum.SG, logContent);
                     }
 
                 }

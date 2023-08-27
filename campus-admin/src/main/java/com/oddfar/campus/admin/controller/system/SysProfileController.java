@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import static com.oddfar.campus.common.utils.SecurityUtils.getLoginUser;
+import static com.oddfar.campus.common.utils.SecurityUtils.getUserId;
 
 /**
  * 个人信息 业务处理
@@ -46,7 +47,7 @@ public class SysProfileController {
     /**
      * 修改用户
      */
-    @PutMapping(name= "个人信息管理-修改")
+    @PutMapping(name = "个人信息管理-修改")
     public R updateProfile(@RequestBody SysUserEntity user) {
         LoginUser loginUser = getLoginUser();
         SysUserEntity sysUser = loginUser.getUser();
@@ -95,6 +96,23 @@ public class SysProfileController {
             return R.ok();
         }
         return R.error("修改密码异常，请联系管理员");
+    }
+
+
+    /**
+     * 消息通知设置
+     */
+    @PutMapping("/notifyMessageSetting")
+    public R notifyMessageSetting(Integer notifyType, String notifyToken) {
+        LoginUser loginUser = getLoginUser();
+        if (userService.notifyMessageSetting(getUserId(), notifyType, notifyToken)) {
+            // 更新缓存用户消息通知设置
+            loginUser.getUser().setNotifyType(notifyType);
+            loginUser.getUser().setNotifyToken(notifyToken);
+            tokenService.setLoginUser(loginUser);
+            return R.ok();
+        }
+        return R.error("更新通知消息设置失败");
     }
 
     /**

@@ -174,4 +174,13 @@ public interface SysUserService {
     boolean checkEmailUnique(SysUserEntity user);
 
 
+    /***
+     * 修改用户的个人消息通知设置
+     * @param userId 用户id
+     * @param notifyType 通知类型
+     * @param notifyToken 通知token
+     * @return 结果
+     */
+    boolean notifyMessageSetting(Long userId,Integer notifyType,String notifyToken);
+
 }
