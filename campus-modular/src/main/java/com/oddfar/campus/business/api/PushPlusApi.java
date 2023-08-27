@@ -3,6 +3,7 @@ package com.oddfar.campus.business.api;
 import cn.hutool.http.HttpUtil;
 import com.oddfar.campus.business.entity.ILog;
 import com.oddfar.campus.business.entity.IUser;
+import com.oddfar.campus.common.utils.SimpleUtils;
 import com.oddfar.campus.common.utils.StringUtils;
 import com.oddfar.campus.framework.manager.AsyncManager;
 
@@ -35,6 +36,23 @@ public class PushPlusApi {
         }
 
 
+    }
+
+    public static void sendNotice(IUser iUser, ILog operLog, String adminPushToken) {
+        String token = iUser.getPushPlusToken();
+        if (StringUtils.isEmpty(token) && StringUtils.isEmpty(adminPushToken)) {
+            return;
+        }
+        String title = iUser.getRemark() + (operLog.getStatus() == 0 ? "-i茅台执行成功" :  "-i茅台执行失败");
+        String content = iUser.getMobile() + System.lineSeparator() + operLog.getLogContent();
+        SimpleUtils.doSupplierWhenTrue(StringUtils.isNotEmpty(token), () -> {
+            AsyncManager.me().execute(sendNotice(token, title, content, "txt"));
+            return null;
+        });
+        SimpleUtils.doSupplierWhenTrue(StringUtils.isNotEmpty(adminPushToken), () -> {
+            AsyncManager.me().execute(sendNotice(adminPushToken, title, content, "txt"));
+            return null;
+        });
     }
 
     /**

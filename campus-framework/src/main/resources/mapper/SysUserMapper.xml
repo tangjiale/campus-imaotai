@@ -3,7 +3,7 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.oddfar.campus.framework.mapper.SysUserMapper">
 
-    <resultMap type="SysUserEntity" id="SysUserResult">
+    <resultMap type="com.oddfar.campus.common.domain.entity.SysUserEntity" id="SysUserResult">
         <id     property="userId"       column="user_id"      />
         <result property="userName"     column="user_name"    />
         <result property="nickName"     column="nick_name"    />
@@ -21,10 +21,11 @@
         <result property="updateUser"     column="update_user"    />
         <result property="updateTime"   column="update_time"  />
         <result property="remark"       column="remark"       />
+        <result property="pushPlusToken"       column="push_plus_token"       />
         <collection  property="roles"   javaType="java.util.List"   resultMap="RoleResult" />
     </resultMap>
 
-    <resultMap id="RoleResult" type="SysRoleEntity">
+    <resultMap id="RoleResult" type="com.oddfar.campus.common.domain.entity.SysRoleEntity">
         <id     property="roleId"       column="role_id"        />
         <result property="roleName"     column="role_name"      />
         <result property="roleKey"      column="role_key"       />
@@ -36,7 +37,7 @@
 
     <sql id="selectUserVo">
         select u.user_id, u.user_name, u.nick_name, u.email, u.avatar, u.phonenumber, u.password, u.sex, u.status, u.del_flag, u.login_ip, u.login_date, u.create_user, u.create_time, u.remark,
-               r.role_id, r.role_name, r.role_key, r.role_sort, r.status as role_status
+               u.push_plus_token, r.role_id, r.role_name, r.role_key, r.role_sort, r.status as role_status
         from sys_user u
                  left join sys_user_role ur on u.user_id = ur.user_id
                  left join sys_role r on r.role_id = ur.role_id

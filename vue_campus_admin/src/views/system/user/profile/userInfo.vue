@@ -1,8 +1,11 @@
 <template>
-  <el-form ref="form" :model="user" :rules="rules" label-width="80px">
+  <el-form ref="form" :model="user" :rules="rules" label-width="90px">
     <el-form-item label="用户昵称" prop="nickName">
       <el-input v-model="user.nickName" maxlength="30" />
-    </el-form-item> 
+    </el-form-item>
+    <el-form-item label="推送token" prop="pushPlusToken">
+      <el-input v-model="user.pushPlusToken" maxlength="50" />
+    </el-form-item>
     <el-form-item label="手机号码" prop="phonenumber">
       <el-input v-model="user.phonenumber" maxlength="11" />
     </el-form-item>

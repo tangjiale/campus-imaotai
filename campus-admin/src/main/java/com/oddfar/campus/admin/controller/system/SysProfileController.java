@@ -46,7 +46,7 @@ public class SysProfileController {
     /**
      * 修改用户
      */
-    @PutMapping("个人信息管理-修改")
+    @PutMapping(name ="个人信息管理-修改")
     public R updateProfile(@RequestBody SysUserEntity user) {
         LoginUser loginUser = getLoginUser();
         SysUserEntity sysUser = loginUser.getUser();
@@ -68,6 +68,7 @@ public class SysProfileController {
             sysUser.setPhonenumber(user.getPhonenumber());
             sysUser.setEmail(user.getEmail());
             sysUser.setSex(user.getSex());
+            sysUser.setPushPlusToken(user.getPushPlusToken());
             tokenService.setLoginUser(loginUser);
             return R.ok();
         }
